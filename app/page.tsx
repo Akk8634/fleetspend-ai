@@ -1,14 +1,25 @@
+import { Suspense } from 'react';
+import { AppHeader } from '@/components/AppHeader';
+import { BillList, BillListSkeleton } from '@/components/BillList';
+import { UploadZone } from '@/components/UploadZone';
+
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center py-32 px-16 bg-white">
-        <h1 className="text-3xl font-semibold tracking-tight text-black">
-          FleetSpend AI
-        </h1>
-        <p className="mt-4 text-lg text-zinc-600">
-          AI-powered invoice processing and fleet spend management.
-        </p>
+    <>
+      <AppHeader />
+      <main className="mx-auto w-full max-w-6xl flex-1 space-y-6 px-4 py-6 sm:px-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Bills to pay</h1>
+          <p className="mt-1 max-w-2xl text-sm text-slate-600">
+            Every bill is read by AI and checked for duplicates, overcharges, new payees and your spending limit.
+            Nothing is paid until you approve it.
+          </p>
+        </div>
+        <UploadZone />
+        <Suspense fallback={<BillListSkeleton />}>
+          <BillList />
+        </Suspense>
       </main>
-    </div>
+    </>
   );
 }

@@ -229,13 +229,13 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
   - Ensure upload, process, correct, and demo reset handlers return correct HTTP status codes, response shapes, and call RPC with the expected arguments (use mocked Supabase and Gemini clients). Ask the user if any questions arise.
   - Done as: route logic lives in `lib/pipeline/` behind a `PipelineStore` interface; `tests/pipeline.test.ts` covers every outcome with an in-memory store and fake Gemini (23 tests). Plus a live end-to-end run on 2026-11-08: reset → upload 8 sample bills → process each → 4 ready, duplicate, overcharge, new_payee, needs_review exactly as designed, 4.3–6.7 s per bill.
 
-- [ ] 14. UI components
-  - [ ] 14.1 Implement `components/BillStatusBadge.tsx`
+- [x] 14. UI components
+  - [x] 14.1 Implement `components/BillStatusBadge.tsx`
     - Props: `status: 'uploaded' | 'extracted' | 'needs_review' | 'ready' | 'flagged' | 'paid'`
     - Render a badge with Tailwind color per status: uploaded→gray, extracted→blue, needs_review→amber, ready→green, flagged→red, paid→teal
     - _Requirements: 9.2, 9.3_
 
-  - [ ] 14.2 Implement `components/BillReviewForm.tsx`
+  - [x] 14.2 Implement `components/BillReviewForm.tsx`
     - Props: bill record (pre-filled extracted fields), list of existing vendors
     - Fields: vendor selector (existing vendors + "New vendor" option), `vendor_name` text input, `currency_code`, `amount` (decimal string, show `formatCurrency` display alongside), `bill_date`, `invoice_number`, `payee_email`
     - Visually highlight (amber border + warning icon) fields whose `confidence < 0.8` (from `low_confidence_fields` array on bill)
@@ -243,13 +243,13 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
     - All amounts displayed as formatted currency strings, never as minor units integers
     - _Requirements: 4.2, 4.3, 4.4, 4.8_
 
-  - [ ] 14.3 Implement `components/ResetDemoButton.tsx`
+  - [x] 14.3 Implement `components/ResetDemoButton.tsx`
     - Only rendered when `DEMO_MODE=true` (passed as prop from server component)
     - Show confirmation dialog before calling `POST /api/demo/reset`
     - On success: redirect to upload page
     - _Requirements: 13.1, 13.4, 13.5_
 
-  - [ ] 14.4 Implement `components/UploadZone.tsx`
+  - [x] 14.4 Implement `components/UploadZone.tsx`
     - Drag-and-drop area + "Browse" button; accept `image/jpeg`, `image/png`, `application/pdf`
     - Client-side pre-validation: MIME type and 10 MB size before sending
     - Show per-file indeterminate spinner during upload
@@ -257,8 +257,8 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
     - Show inline result per file: `BillStatusBadge` + flag summary if flagged, or error message
     - _Requirements: 1.1, 1.2, 1.3, 1.9, 1.10, 9.6_
 
-- [ ] 15. Pages
-  - [ ] 15.1 Create `app/page.tsx` (server component)
+- [x] 15. Pages
+  - [x] 15.1 Create `app/page.tsx` (server component)
     - Fetch all bills where `is_seed = false` (uploaded by the user, not seeded history) plus the vendor name for each
     - Render `UploadZone` at the top
     - Below: a list/table of bills showing `BillStatusBadge`, formatted amount via `formatCurrency`, vendor name, and flag reasons (if any)
@@ -266,26 +266,26 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
     - Render `ResetDemoButton` (passing `demoMode={process.env.DEMO_MODE === 'true'}` as a prop)
     - _Requirements: 4.2, 9.2, 9.3, 13.1_
 
-  - [ ] 15.2 Create `app/bills/[id]/review/page.tsx` (server component)
+  - [x] 15.2 Create `app/bills/[id]/review/page.tsx` (server component)
     - Load the bill record and the full list of vendors server-side via Supabase service role client
     - Pass bill and vendors as props to `BillReviewForm`
     - If the bill status is not `needs_review`, redirect to `/`
     - _Requirements: 4.2_
 
-  - [ ] 15.3 Wire up client-side refresh after processing and correction
+  - [x] 15.3 Wire up client-side refresh after processing and correction
     - In `UploadZone`, after all process calls complete, call `router.refresh()` (Next.js App Router) to re-fetch the bill list on the server component
     - In `BillReviewForm`, after a successful correction submission, call `router.refresh()` and redirect to `/`
     - _Requirements: 1.10, 4.7_
 
-- [ ] 16. Manual test checklist document
-  - [ ] 16.1 Create `docs/manual-test-checklist.md`
+- [x] 16. Manual test checklist document
+  - [x] 16.1 Create `docs/manual-test-checklist.md`
     - Pre-conditions section: seed script run, `DEMO_MODE=true`, `POLICY_LIMIT_MINOR_UNITS=100000` set in `.env.local`, 8 sample images present in `public/samples/`
     - Step-by-step instructions for uploading and processing each of the 8 bills in order: `ready-1.jpg` through `ready-4.jpg`, then `duplicate.jpg`, `overcharge.jpg`, `new-payee.jpg`, `needs-review.jpg`
     - Expected outcome per bill: status value, flags present/absent, flag reason text (using amounts from seed data design table)
     - Reset demo steps: click Reset Demo button → confirm dialog → verify redirect to upload page → verify 0 bills shown
     - _Requirements: 12.3, 12.4, 13.4_
 
-- [ ] 17. Final checkpoint — full integration
+- [x] 17. Final checkpoint — full integration
   - Ensure all automated tests pass (`vitest --run`). Verify `.env.example` contains all variables with correct placeholder values. Confirm `supabase/seed.sql` contains only `SELECT seed_demo_data();`. Ask the user if any questions arise.
 
 ## Notes
