@@ -17,7 +17,12 @@ export class BatchNotFoundError extends Error {
 }
 
 export interface PaymentStore {
-  approveAndCreateBatch(billIds: string[], overrides: Record<string, string>, actor: string): Promise<string>;
+  approveAndCreateBatch(
+    billIds: string[],
+    overrides: Record<string, string>,
+    actor: string,
+    plan?: { instruction: string; summary?: string },
+  ): Promise<string>;
   getBatch(batchId: string): Promise<PayoutBatchWithItems>;
   markBatchSubmitted(batchId: string, paypalBatchId: string, status: string): Promise<void>;
   markBatchRejected(batchId: string, errorName: string, errorMessage: string): Promise<void>;
@@ -56,8 +61,14 @@ export function createSupabasePaymentStore(supabase: SupabaseClient): PaymentSto
   };
 
   return {
-    async approveAndCreateBatch(billIds, overrides, actor) {
-      const id = await rpc('approve_and_create_batch', { p_bill_ids: billIds, p_overrides: overrides, p_actor: actor });
+    async approveAndCreateBatch(billIds, overrides, actor, plan) {
+      // p_plan is only sent when present, so manual approvals also work against the pre-009 function.
+      const id = await rpc('approve_and_create_batch', {
+        p_bill_ids: billIds,
+        p_overrides: overrides,
+        p_actor: actor,
+        ...(plan ? { p_plan: plan } : {}),
+      });
       if (typeof id !== 'string') throw new Error('approve_and_create_batch returned no batch id');
       return id;
     },

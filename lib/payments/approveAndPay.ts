@@ -17,7 +17,16 @@ export const approvalSchema = z.object({
     .max(MAX_BILLS_PER_APPROVAL, `At most ${MAX_BILLS_PER_APPROVAL} bills can be paid at once`)
     .refine((ids) => new Set(ids).size === ids.length, 'The same bill was selected twice'),
   overrides: z.record(z.string(), z.string().trim().max(500, 'Override reasons must be at most 500 characters')).default({}),
+  /** Set when the selection came from the AI Payment Assistant (stored for the audit trail). */
+  plan: z
+    .object({
+      instruction: z.string().trim().min(1).max(300),
+      summary: z.string().trim().max(500).optional(),
+    })
+    .optional(),
 });
+
+export type ApprovalPlan = { instruction: string; summary?: string };
 
 export class PaymentInputError extends Error {
   constructor(message: string) {
@@ -37,7 +46,7 @@ export async function approveAndPay(input: unknown, deps: PaymentDeps): Promise<
   const overrides = Object.fromEntries(
     Object.entries(parsed.data.overrides).filter(([id, reason]) => parsed.data.billIds.includes(id) && reason.length > 0),
   );
-  const batchId = await deps.store.approveAndCreateBatch(parsed.data.billIds, overrides, OWNER);
+  const batchId = await deps.store.approveAndCreateBatch(parsed.data.billIds, overrides, OWNER, parsed.data.plan);
 
   await submitBatch(batchId, deps);
   const batch = await deps.store.getBatch(batchId);

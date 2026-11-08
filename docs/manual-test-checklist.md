@@ -54,6 +54,15 @@ Pre-condition: `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` belong to a sandbox a
 - [ ] Select a **Paid** bill → impossible (no checkbox). Calling `POST /api/payouts` with a paid bill id returns 409 "Bill is paid and cannot be approved."
 - [ ] Leave the duplicate (MAR-002) and new-payee bills unpaid: flagged bills are never paid without a typed reason.
 
+## 4b. Payment Assistant and approval table (instead of, or after, step 4 on a fresh demo)
+
+- [ ] Approval table: the status chips show counts (Ready 4, Flagged 3, Needs review 1); clicking **Flagged** shows only flagged rows; the search box filters by vendor/invoice/payee; sorting by Amount works.
+- [ ] Only Ready / Flagged / Failed rows have checkboxes; the header checkbox selects only payable rows in the current filter.
+- [ ] Click the example **Pay all clean fuel bills from this week** → plan: Apex Fuel Co #APX-104 $210.00 ("Fuel · Nov 4 · passed all checks"); "Left out: 2 bills" lists the Highway Diesel (new payee) and Apex APX-105 (overcharge) bills.
+- [ ] **Pay everything under $300** → City Lube $90, Driver Direct $160, Apex $210 = $460.00, 2 payees.
+- [ ] **Pay all Apex Fuel bills, including flagged ones** → APX-104 and APX-105 = $660.00 → **Review & approve** → the dialog says "Suggested by the Payment Assistant…" and asks for a reason for APX-105 → type it → Pay → both become Paid.
+- [ ] Ask "What's the weather in Pune?" → the assistant asks a clarifying question; no plan is made.
+
 ## 5. Edge cases (optional)
 
 - [ ] Upload a `.gif` or a `.txt` file → the row shows "Use a JPG, PNG or PDF file." and other files still process.

@@ -5,7 +5,7 @@ import type { BillWithDetails } from '@/lib/db/types';
 import { formatCurrency } from '@/lib/money/formatCurrency';
 import { createSupabasePaymentStore } from '@/lib/payments/store';
 import { getPayPalConfig } from '@/lib/paypal/config';
-import { BillTable } from './BillTable';
+import { ApprovalWorkspace } from './ApprovalWorkspace';
 import { PaymentsPanel } from './PaymentsPanel';
 
 function Summary({ bills }: { bills: BillWithDetails[] }) {
@@ -46,7 +46,7 @@ export async function BillList() {
   return (
     <div className="space-y-6">
       <Summary bills={bills} />
-      <BillTable bills={bills} payPalReady={payPalReady} />
+      <ApprovalWorkspace bills={bills} payPalReady={payPalReady} />
       <PaymentsPanel batches={batches} />
     </div>
   );

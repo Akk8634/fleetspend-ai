@@ -13,10 +13,13 @@ type Problem = { bill_id: string | null; label: string; reason: string };
  */
 export function ApprovalDialog({
   bills,
+  plan,
   onClose,
   onPaid,
 }: {
   bills: BillWithDetails[];
+  /** Present when the selection is exactly the Payment Assistant's plan (stored for the audit trail). */
+  plan?: { instruction: string; summary: string };
   onClose: () => void;
   onPaid: (summary: string) => void;
 }) {
@@ -52,6 +55,7 @@ export function ApprovalDialog({
         body: JSON.stringify({
           billIds: bills.map((b) => b.id),
           overrides: Object.fromEntries(flagged.map((b) => [b.id, reasons[b.id]?.trim() ?? ''])),
+          ...(plan ? { plan } : {}),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -93,6 +97,11 @@ export function ApprovalDialog({
           You are about to pay <strong>{formatCurrency(total)}</strong> to {payees} payee{payees === 1 ? '' : 's'} with PayPal (sandbox).
           The AI never pays on its own — this needs your confirmation.
         </p>
+        {plan && (
+          <p className="mt-2 rounded-md bg-indigo-50 px-3 py-2 text-xs text-indigo-900">
+            Suggested by the Payment Assistant for “{plan.instruction}”. {plan.summary}
+          </p>
+        )}
 
         <ul className="mt-4 divide-y divide-slate-100 rounded-lg border border-slate-200">
           {bills.map((b) => {

@@ -27,6 +27,10 @@ export type PayoutBatch = {
   error_name: string | null;
   error_message: string | null;
   finished: boolean;
+  /** Added by migration 009; absent before it runs. */
+  source?: 'manual' | 'assistant';
+  assistant_instruction?: string | null;
+  assistant_summary?: string | null;
   created_at: string;
   updated_at: string;
 };
