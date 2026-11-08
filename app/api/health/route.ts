@@ -2,7 +2,7 @@ import { connection } from 'next/server';
 import { createServerClient } from '@/lib/db/client';
 
 /**
- * GET /api/health — tiny liveness check used by the daily keep-alive workflow.
+ * GET /api/health — tiny liveness check, called daily by the Vercel Cron in vercel.json.
  * Runs one cheap query so the Supabase free-tier project never pauses for inactivity.
  * Returns no data beyond up/down.
  */
