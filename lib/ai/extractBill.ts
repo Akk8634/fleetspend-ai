@@ -105,6 +105,9 @@ export async function extractBill(fileBuffer: Buffer, mimeType: string, deps: Ex
       clearTimeout(timer);
       const canRetry = lastFailure.kind === 'timeout' || lastFailure.retryable;
       if (attempt < MAX_ATTEMPTS && canRetry) {
+        console.warn(
+          `[extractBill] attempt ${attempt} failed (${lastFailure.kind === 'timeout' ? 'timeout' : lastFailure.detail}); retrying in ${retryDelayMs} ms`,
+        );
         await sleep(retryDelayMs);
         continue;
       }

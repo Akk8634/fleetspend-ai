@@ -180,8 +180,8 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
     - On success: `JSON.parse` response text, validate with `extractionSchema`; throw `ZodValidationError` on failure
     - _Requirements: 2.1, 2.8, 2.9_
 
-- [ ] 9. Upload API route
-  - [ ] 9.1 Create `app/api/bills/upload/route.ts`
+- [x] 9. Upload API route
+  - [x] 9.1 Create `app/api/bills/upload/route.ts`
     - Parse `multipart/form-data` via `request.formData()`
     - Per-file validation: MIME type in `['image/jpeg', 'image/png', 'application/pdf']`, size ≤ 10 MB; reject with filename + reason on failure without aborting other files
     - For each valid file: generate UUID, store to `bills/{uuid}/{original_filename}` in Supabase Storage (private bucket)
@@ -191,8 +191,8 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
     - Enforce max 20 files / 100 MB combined
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9_
 
-- [ ] 10. Process API route (extraction + checks pipeline)
-  - [ ] 10.1 Create `app/api/bills/[id]/process/route.ts`
+- [x] 10. Process API route (extraction + checks pipeline)
+  - [x] 10.1 Create `app/api/bills/[id]/process/route.ts`
     - Add `export const maxDuration = 60` at the top of the file to extend the Vercel serverless function timeout to 60 seconds
     - Load bill by id; if `status !== 'uploaded'` return `{ billId, status, flags, skipped: true }` immediately (idempotency)
     - Download the bill file from Storage using `supabase.storage.from('bills').download(storagePath)` (service role client, no signed URL needed server-side)
@@ -207,8 +207,8 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
     - Return `{ billId, status: 'ready' | 'flagged', flags }`
     - _Requirements: 2.1, 2.3, 2.4, 2.5, 2.6, 2.7, 2.9, 3.1, 3.2, 3.3, 4.1, 5.1, 5.2, 5.3, 6.1, 6.2, 7.1, 8.1, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 11.1_
 
-- [ ] 11. Correct API route (manual review submission)
-  - [ ] 11.1 Create `app/api/bills/[id]/correct/route.ts`
+- [x] 11. Correct API route (manual review submission)
+  - [x] 11.1 Create `app/api/bills/[id]/correct/route.ts`
     - Parse and validate request body: `vendor_name` (non-empty, ≤ 255), `currency_code` (valid ISO 4217 AND must be `USD`), `amount` (positive decimal ≤ 2 dp, convert to minor units via `parseAmountText`, range 1–999,999,999), `bill_date` (calendar-valid YYYY-MM-DD), optional `vendor_id` (UUID), `invoice_number`, `payee_email`
     - On validation failure: return 400 with field-level error details; no DB changes
     - If `vendor_name` provided and `vendor_id` is null/absent: call `matchOrCreateVendor`; else use provided `vendor_id`
@@ -217,16 +217,17 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
     - Return `{ billId, status, flags }`
     - _Requirements: 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 9.1, 9.2, 9.3, 9.4_
 
-- [ ] 12. Demo reset API route
-  - [ ] 12.1 Create `app/api/demo/reset/route.ts`
+- [x] 12. Demo reset API route
+  - [x] 12.1 Create `app/api/demo/reset/route.ts`
     - Check `process.env.DEMO_MODE === 'true'`; return 403 if false
     - Delete all objects in the `bills` Storage bucket using service role client
     - Call `reset_demo()` RPC
     - Return `{ success: true }` or `{ error: string }`
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6_
 
-- [ ]* 13. Checkpoint — verify API route layer
+- [x]* 13. Checkpoint — verify API route layer
   - Ensure upload, process, correct, and demo reset handlers return correct HTTP status codes, response shapes, and call RPC with the expected arguments (use mocked Supabase and Gemini clients). Ask the user if any questions arise.
+  - Done as: route logic lives in `lib/pipeline/` behind a `PipelineStore` interface; `tests/pipeline.test.ts` covers every outcome with an in-memory store and fake Gemini (23 tests). Plus a live end-to-end run on 2026-11-08: reset → upload 8 sample bills → process each → 4 ready, duplicate, overcharge, new_payee, needs_review exactly as designed, 4.3–6.7 s per bill.
 
 - [ ] 14. UI components
   - [ ] 14.1 Implement `components/BillStatusBadge.tsx`
