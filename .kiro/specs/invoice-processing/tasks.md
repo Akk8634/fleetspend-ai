@@ -141,38 +141,38 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
 - [x] 6. Checkpoint — verify pure-function layer
   - Ensure all tests in `tests/money.test.ts`, `tests/vendors.test.ts`, and `tests/checks.test.ts` pass. Ask the user if any questions arise.
 
-- [ ] 7. Supabase client and database access layer
-  - [ ] 7.1 Create `lib/db/client.ts`
+- [x] 7. Supabase client and database access layer
+  - [x] 7.1 Create `lib/db/client.ts`
     - Export `createServerClient()` that returns the Supabase client initialised with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from env vars (never the anon key for write operations)
     - _Requirements: 1.4, 1.5_
 
-  - [ ] 7.2 Implement `lib/db/bills.ts`
+  - [x] 7.2 Implement `lib/db/bills.ts`
     - `getBillById(id: string, supabase): Promise<Bill>`
     - `getBillsForDuplicateCheck(vendorId: string, supabase): Promise<ExistingBill[]>` — WHERE `vendor_id = $1 AND status NOT IN ('uploaded', 'needs_review')`
     - `getOverchargeHistory(vendorId: string, currencyCode: string, supabase): Promise<{ count: number; sum: number }>` — call the `get_overcharge_history(p_vendor_id, p_currency_code)` RPC (returns `paid_count`, `paid_sum`)
     - `getPaidVendorIds(supabase): Promise<Set<string>>` — SELECT DISTINCT vendor_id WHERE `status='paid'`
     - _Requirements: 5.1, 6.1, 7.1_
 
-  - [ ] 7.3 Implement `lib/db/vendors.ts`
+  - [x] 7.3 Implement `lib/db/vendors.ts`
     - `getVendorByNormalizedName(normalizedName: string, supabase): Promise<Vendor | null>`
     - `createVendor(fields: NewVendor, supabase): Promise<Vendor>`
     - _Requirements: 2.5_
 
-  - [ ] 7.4 Implement `lib/db/checks.ts`
+  - [x] 7.4 Implement `lib/db/checks.ts`
     - `getPolicyLimitMinorUnits(): number | null` — reads `POLICY_LIMIT_MINOR_UNITS` from `process.env`; returns null (and logs config error server-side) when absent, zero, negative, or non-integer
     - _Requirements: 8.1_
 
-- [ ] 8. AI extraction layer
-  - [ ] 8.1 Create `lib/ai/prompt.ts`
+- [x] 8. AI extraction layer
+  - [x] 8.1 Create `lib/ai/prompt.ts`
     - Export the extraction prompt string exactly as specified in the design (fields, schema comment, confidence scoring instructions)
     - _Requirements: 2.2_
 
-  - [ ] 8.2 Create `lib/ai/extractionSchema.ts`
+  - [x] 8.2 Create `lib/ai/extractionSchema.ts`
     - Export `extractionSchema` zod object and `Extraction` type matching the design spec exactly
     - Export typed error classes: `GeminiTimeoutError`, `GeminiServiceError`, `ZodValidationError`
     - _Requirements: 2.3, 2.4_
 
-  - [ ] 8.3 Implement `lib/ai/extractBill.ts`
+  - [x] 8.3 Implement `lib/ai/extractBill.ts`
     - `extractBill(fileBuffer: Buffer, mimeType: string): Promise<Extraction>`
     - Send `fileBuffer` as inline part to model `process.env.GEMINI_MODEL`; set `responseMimeType: "application/json"` with `responseSchema` mirroring the zod schema shape (Gemini JSON mode)
     - AbortController timeout: 20 seconds
