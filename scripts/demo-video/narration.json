@@ -1,0 +1,22 @@
+[
+  { "id": "s1_intro", "caption": "Small fleets pay dozens of bills a week — FleetSpend AI reads, checks and pays them, with a human in control.",
+    "text": "Small fleet businesses pay dozens of bills every week. Fuel, repairs, parts and drivers. FleetSpend AI reads every bill, catches costly mistakes, and pays vendors with PayPal, only after a human approves." },
+  { "id": "s2_upload", "caption": "Upload 8 bills → Gemini reads vendor, amount, date, invoice # and PayPal email, with a confidence score per field",
+    "text": "This is the live app. I reset the demo and upload eight sample bills. Gemini reads each one: the vendor, the amount, the date, the invoice number and the payee's PayPal email, with a confidence score for every field." },
+  { "id": "s3_checks", "caption": "Four checks on every bill: duplicate · overcharge · new payee · spending limit",
+    "text": "Then four checks run on every bill: duplicate invoice, overcharge, first time payee, and the spending limit. Bills are processed one by one, so a duplicate inside the same upload is caught too." },
+  { "id": "s4_results", "caption": "4 bills ready · 3 flagged with plain-English reasons · 1 needs human review",
+    "text": "Four bills passed every check. One is a copy of an invoice that was already paid. One is more than twice this vendor's usual price. And one is from a brand new payee. Every flag explains itself in plain English." },
+  { "id": "s5_review", "caption": "Unsure? Ask the human: original bill next to the form, unsure fields highlighted",
+    "text": "This crumpled receipt was hard to read, so the AI said it was not sure about the amount and the date. The owner sees the original bill, fixes those two fields, and the checks run again." },
+  { "id": "s6_assistant", "caption": "Payment Assistant: AI turns words into selection rules — code picks the bills, caps the total, and never pays",
+    "text": "Now the Payment Assistant. I ask it to pay all Apex Fuel bills, including flagged ones. The AI only turns my words into selection rules. Plain code picks the bills, explains each one, and caps the total. It can never pay on its own." },
+  { "id": "s7_approve", "caption": "Human approval: payees, total, and a written reason for every flagged bill",
+    "text": "I review the payee and the total. The flagged overcharge needs a written reason before PayPal is allowed to pay it." },
+  { "id": "s8_paypal", "caption": "One PayPal Payouts batch · idempotent request id · status confirmed by PayPal",
+    "text": "One click sends a PayPal Payouts batch. A unique request ID means a retry can never pay twice, and the app checks the status with PayPal every few seconds." },
+  { "id": "s8b_paid", "caption": "Paid — confirmed by PayPal, with real sandbox transaction IDs",
+    "text": "And there it is. PayPal confirms the payout, and both bills are paid, with real sandbox transaction IDs." },
+  { "id": "s9_close", "caption": "AI reads, checks and suggests. A human approves. PayPal pays.",
+    "text": "FleetSpend AI. AI that reads, checks and suggests, and a human who approves every payment with PayPal. Built with Next.js, Gemini, Supabase, AG Grid and PayPal Payouts." }
+]

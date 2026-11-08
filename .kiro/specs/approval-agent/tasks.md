@@ -40,7 +40,7 @@
   - Browser: the three demo instructions; approve one plan and confirm the batch shows source = assistant
   - _Requirements: 6.3_
 
-- [ ] 7. Final checkpoint — tests, type-check, lint, build; deploy and re-check the live site
+- [x] 7. Final checkpoint — tests, type-check, lint, build; deploy and re-check the live site
 
 ## Notes
 
