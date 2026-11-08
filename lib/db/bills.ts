@@ -1,17 +1,20 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ExistingBill } from '../checks/checkDuplicate';
-import type { Bill, BillWithDetails } from './types';
+import type { Bill, BillWithDetails, LatestPayout } from './types';
 
-const BILL_WITH_DETAILS = '*, vendors(name), flags(check_name, reason)';
+const BILL_WITH_DETAILS =
+  '*, vendors(name), flags(check_name, reason), payout_items(outcome, transaction_id, transaction_status, error_message, created_at)';
 
 type BillRow = Bill & {
   vendors: { name: string } | null;
   flags: { check_name: BillWithDetails['flags'][number]['check_name']; reason: string }[] | null;
+  payout_items?: LatestPayout[] | null;
 };
 
 function toDetails(row: BillRow): BillWithDetails {
-  const { vendors, flags, ...bill } = row;
-  return { ...bill, vendor_name: vendors?.name ?? bill.vendor_name_raw, flags: flags ?? [] };
+  const { vendors, flags, payout_items, ...bill } = row;
+  const latest = [...(payout_items ?? [])].sort((a, b) => b.created_at.localeCompare(a.created_at))[0] ?? null;
+  return { ...bill, vendor_name: vendors?.name ?? bill.vendor_name_raw, flags: flags ?? [], payout: latest };
 }
 
 export class BillNotFoundError extends Error {

@@ -29,7 +29,7 @@ class FakeStore implements PipelineStore {
       id: `b${++this.seq}`, vendor_id: null, storage_path: 'x/bill.jpg', original_filename: 'bill.jpg', status: 'uploaded',
       vendor_name_raw: null, amount_text: null, amount_minor_units: null, currency_code: null, bill_date: null,
       invoice_number: null, payee_email: null, category: null, confidence: null, low_confidence_fields: null,
-      review_message: null, is_seed: false, created_at: '', updated_at: '', vendor_name: null, flags: [], ...over,
+      review_message: null, is_seed: false, created_at: '', updated_at: '', vendor_name: null, flags: [], payout: null, ...over,
     };
     this.bills.set(b.id, b);
     return b;

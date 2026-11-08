@@ -7,7 +7,9 @@ const STYLES: Record<BillStatus, string> = {
   needs_review: 'bg-amber-50 text-amber-800 ring-amber-300',
   ready: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
   flagged: 'bg-red-50 text-red-700 ring-red-200',
+  payout_pending: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
   paid: 'bg-teal-50 text-teal-700 ring-teal-200',
+  payout_failed: 'bg-rose-100 text-rose-800 ring-rose-300',
 };
 
 const DOTS: Record<BillStatus, string> = {
@@ -16,7 +18,9 @@ const DOTS: Record<BillStatus, string> = {
   needs_review: 'bg-amber-500',
   ready: 'bg-emerald-500',
   flagged: 'bg-red-500',
+  payout_pending: 'bg-indigo-500 animate-pulse',
   paid: 'bg-teal-500',
+  payout_failed: 'bg-rose-600',
 };
 
 export function BillStatusBadge({ status }: { status: BillStatus }) {

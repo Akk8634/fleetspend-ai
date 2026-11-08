@@ -7,7 +7,9 @@ export const STATUS_LABEL: Record<BillStatus, string> = {
   needs_review: 'Needs review',
   ready: 'Ready to pay',
   flagged: 'Flagged',
+  payout_pending: 'Paying…',
   paid: 'Paid',
+  payout_failed: 'Payment failed',
 };
 
 export const CHECK_LABEL: Record<CheckName, string> = {
