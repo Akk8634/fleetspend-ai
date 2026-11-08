@@ -34,29 +34,29 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
   - Create `supabase/seed.sql` containing exactly: `SELECT seed_demo_data();`
   - _Requirements: 1.4, 1.5, 1.6, 11.6, 11.7, 12.1, 12.2, 13.2_
 
-- [ ] 3. Money utilities
-  - [ ] 3.1 Implement `lib/money/parseAmountText.ts`
+- [x] 3. Money utilities
+  - [x] 3.1 Implement `lib/money/parseAmountText.ts`
     - Export `class InvalidAmountError extends Error`
     - Implement `parseAmountText(amountText: string, currencyCode: string): number` exactly per the design algorithm: strip commas, regex match `^(\d+)(?:\.(\d{1,2}))?$`, multiply parts separately, enforce range 1–999,999,999
     - _Requirements: 2.6, 4.5, 10.6_
 
-  - [ ] 3.2 Implement `lib/money/formatCurrency.ts`
+  - [x] 3.2 Implement `lib/money/formatCurrency.ts`
     - Export `formatCurrency(minorUnits: number): string` per the design: integer floor division for dollars, modulo for cents, `toLocaleString('en-US')` for thousands separator
     - _Requirements: 6.6, 8.2_
 
-  - [ ] 3.3 Write unit tests for money utilities (`tests/money.test.ts`)
+  - [x] 3.3 Write unit tests for money utilities (`tests/money.test.ts`)
     - `parseAmountText`: valid integers, valid decimals, comma-separated thousands, single decimal place (e.g. `"5.5"`), boundary values (1 minor unit = `"0.01"`, max = `"9999999.99"`), invalid inputs (letters, empty string, three decimal places, zero, value out of range)
     - `formatCurrency`: known values (e.g. 22000 → `"$220.00"`), zero cents (e.g. 100 → `"$1.00"`), cents < 10 (padded), large amounts with thousands separator
     - _Requirements: 10.6_
 
-  - [ ] 3.4 Write property test for amount round-trip (`tests/money.test.ts`)
+  - [x] 3.4 Write property test for amount round-trip (`tests/money.test.ts`)
     - **Property 6: Amount conversion round-trip**
     - Arbitrary: `fc.tuple(fc.integer({ min: 0, max: 9_999_999 }), fc.integer({ min: 0, max: 99 }))` → construct `amount_text = \`${dollars}.${String(cents).padStart(2, '0')}\``
     - Assert: `parseAmountText(amountText, 'USD') === dollars * 100 + cents`
     - **Validates: Requirements 10.6, 2.6**
 
-- [ ] 4. Vendor utilities
-  - [ ] 4.1 Implement `lib/vendors/normalizeVendorName.ts`
+- [x] 4. Vendor utilities
+  - [x] 4.1 Implement `lib/vendors/normalizeVendorName.ts`
     - Export `normalizeVendorName(name: string): string` with exactly this pipeline (order matters):
       1. Lowercase → trim
       2. Remove all punctuation: `replace(/[^\w\s]/g, '')`
@@ -65,7 +65,7 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
       5. Collapse multiple spaces → trim
     - _Requirements: 2.5_
 
-  - [ ] 4.2 Write unit tests for `normalizeVendorName` (`tests/vendors.test.ts`)
+  - [x] 4.2 Write unit tests for `normalizeVendorName` (`tests/vendors.test.ts`)
     - `"City Lube Stn."` → `"city lube station"`
     - `"City Lube Station"` → `"city lube station"`
     - `"Apex Fuel Company"` → `"apex fuel"`
@@ -74,21 +74,21 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
     - `"  Highway  Diesel  Inc  "` → `"highway diesel"` (whitespace collapsing)
     - _Requirements: 2.5_
 
-  - [ ] 4.3 Implement `lib/vendors/matchOrCreateVendor.ts`
+  - [x] 4.3 Implement `lib/vendors/matchOrCreateVendor.ts`
     - Import `normalizeVendorName`; import Supabase client type
     - `matchOrCreateVendor(extractedName: string, supabase: SupabaseClient): Promise<{ vendorId: string }>`
     - Query `vendors` by `normalized_name`; if found return its id; if not found INSERT with `name = extractedName`, `normalized_name`, `category = null`, `paypal_email = null`; return new id
     - _Requirements: 2.5_
 
-- [ ] 5. Check engine — pure functions
-  - [ ] 5.1 Implement `lib/checks/checkDuplicate.ts`
+- [x] 5. Check engine — pure functions
+  - [x] 5.1 Implement `lib/checks/checkDuplicate.ts`
     - Export `Flag` type: `{ check_name: 'duplicate' | 'overcharge' | 'new_payee' | 'policy_limit'; reason: string }`
     - Export `BillForCheck` and `ExistingBill` types per the design
     - Implement `checkDuplicate(bill: BillForCheck, existingBills: ExistingBill[]): Flag | null`
     - Exclude self (`existing.id === bill.id`); match set A (vendor + invoice_number, both non-null); match set B (vendor + amount + date); union; if empty return null; find earliest match by bill_date lexicographic sort; return flag with exact reason format from design
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
 
-  - [ ] 5.2 Implement `lib/checks/checkOvercharge.ts`
+  - [x] 5.2 Implement `lib/checks/checkOvercharge.ts`
     - Import `formatCurrency`
     - Implement `checkOvercharge(bill: { amount_minor_units: number; vendor_name: string }, history: { count: number; sum: number }): Flag | null`
     - Return null if `history.count < 2`
@@ -97,25 +97,25 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
     - Return overcharge flag with reason from design
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [ ] 5.3 Implement `lib/checks/checkNewPayee.ts`
+  - [x] 5.3 Implement `lib/checks/checkNewPayee.ts`
     - Implement `checkNewPayee(vendorId: string, vendorName: string, paidVendorIds: Set<string>): Flag | null`
     - Return `new_payee` flag with reason `"First-time payee: [vendorName] has no payment history."` when `vendorId` absent from set; else null
     - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-  - [ ] 5.4 Implement `lib/checks/checkPolicyLimit.ts`
+  - [x] 5.4 Implement `lib/checks/checkPolicyLimit.ts`
     - Import `formatCurrency`
     - Implement `checkPolicyLimit(amount: number, limit: number | null): Flag | null`
     - Return null when `limit === null`; return `policy_limit` flag when `amount > limit`; else null
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-  - [ ] 5.5 Write unit tests for check engine (`tests/checks.test.ts`)
+  - [x] 5.5 Write unit tests for check engine (`tests/checks.test.ts`)
     - `checkDuplicate`: no-flag (empty list), no-flag (self-exclusion), flag via invoice_number match, flag via amount+date match, flag via both (one flag only, earliest match), no flag when invoice_number is null on both sides
     - `checkOvercharge`: no flag (count = 1), no flag (amount at exact threshold), flag (amount above threshold), BigInt boundary (large values)
     - `checkNewPayee`: flag (absent from set), no flag (present in set), empty set
     - `checkPolicyLimit`: null limit → no flag, amount = limit → no flag, amount > limit → flag, amount < limit → no flag
     - _Requirements: 5.5, 6.4, 7.4, 8.4_
 
-  - [ ] 5.6 Write property tests for check engine (`tests/checks.test.ts`)
+  - [x] 5.6 Write property tests for check engine (`tests/checks.test.ts`)
     - **Property 1: Duplicate check — no flag when no match exists**
       - Arbitrary: bill and list of existing bills where no entry matches set A or set B conditions; exclude self by construction
       - Assert: `checkDuplicate(bill, existingBills) === null`
@@ -138,7 +138,7 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
       - Assert: `!paidVendorIds.has(vendorId) ↔ checkNewPayee(vendorId, 'v', new Set(paidVendorIds)) !== null`
       - **Validates: Requirements 7.1, 7.2, 7.3, 7.4**
 
-- [ ] 6. Checkpoint — verify pure-function layer
+- [x] 6. Checkpoint — verify pure-function layer
   - Ensure all tests in `tests/money.test.ts`, `tests/vendors.test.ts`, and `tests/checks.test.ts` pass. Ask the user if any questions arise.
 
 - [ ] 7. Supabase client and database access layer
