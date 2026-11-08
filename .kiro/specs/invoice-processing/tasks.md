@@ -17,7 +17,8 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
   - Create `README.md` stub with: project name "FleetSpend AI", one-sentence description, "Getting Started" section with `npm install`, `supabase db push`, `npm run dev`
   - _Requirements: (scaffolding — no direct requirement reference)_
 
-- [ ] 2. Project scaffolding, environment config, and database migrations
+- [x] 2. Project scaffolding, environment config, and database migrations
+  - Implementation notes (added during build): `bills.review_message` column stores the plain-English needs_review reason for the UI; `get_overcharge_history(vendor_id, currency)` RPC returns paid count + sum (Supabase REST has aggregates disabled by default); `save_field_corrections` takes bills column names as keys and records old/new values per field. Verified with 36 checks against an in-memory Postgres (PGlite).
   - Create `.env.example` with all required environment variables (server-only, no NEXT_PUBLIC_ variables):
     `SUPABASE_URL=`, `SUPABASE_SERVICE_ROLE_KEY=`, `GEMINI_API_KEY=`, `GEMINI_MODEL=`, `POLICY_LIMIT_MINOR_UNITS=100000`, `DEMO_MODE=true`
   - Create `supabase/migrations/001_create_vendors.sql` — `vendors` table with `id`, `name`, `normalized_name UNIQUE`, `paypal_email`, `category`, `created_at`; index on `normalized_name`
@@ -148,7 +149,7 @@ Implement the full invoice-processing pipeline for FleetSpend AI: database schem
   - [ ] 7.2 Implement `lib/db/bills.ts`
     - `getBillById(id: string, supabase): Promise<Bill>`
     - `getBillsForDuplicateCheck(vendorId: string, supabase): Promise<ExistingBill[]>` — WHERE `vendor_id = $1 AND status NOT IN ('uploaded', 'needs_review')`
-    - `getOverchargeHistory(vendorId: string, currencyCode: string, supabase): Promise<{ count: number; sum: number }>` — SELECT COUNT(*), SUM(amount_minor_units) WHERE `vendor_id=$1 AND currency_code=$2 AND status='paid'`
+    - `getOverchargeHistory(vendorId: string, currencyCode: string, supabase): Promise<{ count: number; sum: number }>` — call the `get_overcharge_history(p_vendor_id, p_currency_code)` RPC (returns `paid_count`, `paid_sum`)
     - `getPaidVendorIds(supabase): Promise<Set<string>>` — SELECT DISTINCT vendor_id WHERE `status='paid'`
     - _Requirements: 5.1, 6.1, 7.1_
 
